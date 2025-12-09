@@ -25,6 +25,11 @@ class State(TypedDict):
     user_input_needed: bool
 
 
+class ConfigurableState(TypedDict):
+    """Configuration for checkpointer (thread management)"""
+    thread_id: str
+
+
 class EvaluatorOutput(BaseModel):
     feedback: str = Field(description="Feedback on the assistant's response")
     success_criteria_met: bool = Field(description="Whether the success criteria have been met")
@@ -189,8 +194,11 @@ class Sidekick:
         )
         graph_builder.add_edge(START, "worker")
 
-        # Compile the graph
-        self.graph = graph_builder.compile(checkpointer=self.memory)
+        # Compile the graph with checkpointer and configurable fields
+        self.graph = graph_builder.compile(
+            checkpointer=self.memory,
+            configurable={"thread_id": ""}  # Define the configurable fields
+        )
 
     async def run_superstep(self, message, success_criteria, history):
         config = {"configurable": {"thread_id": self.sidekick_id}}
