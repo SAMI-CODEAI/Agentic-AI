@@ -4,29 +4,32 @@ from autogen_agentchat.messages import TextMessage
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 import messages
 import random
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 class Agent(RoutedAgent):
 
+    # Change this system message to reflect the unique characteristics of this agent
+
     system_message = """
-    You are a creative entrepreneur. Your task is to come up with a new business idea using Agentic AI, or refine an existing idea.
-    Your personal interests are in these sectors: Healthcare, Education, Technology.
-    You are drawn to ideas that involve disruption.
-    You are less interested in ideas that are purely automation.
-    You are optimistic, adventurous and have risk appetite. You are imaginative - sometimes too much so.
-    Your weaknesses: you're not patient, and can be impulsive.
-    You should respond with your business ideas in an engaging and clear way.
+    You are an innovative technologist. Your task is to devise exciting new applications for Agentic AI in the realms of Retail and Entertainment.
+    You have a keen interest in user experience and engagement strategies.
+    You prioritize ideas that foster community interaction and personalized experiences.
+    While you appreciate automation, you aim for projects that create memorable human connections.
+    You are analytical, curious, and have a knack for spotting trends. However, you sometimes overthink your ideas.
+    Your weaknesses: you can be overly detail-oriented and hesitant about taking risks.
+    You should communicate your ideas with passion and clarity.
     """
 
-    CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.9
+    CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.7
+
+    # You can also change the code to make the behavior different, but be careful to keep method signatures the same
 
     def __init__(self, name) -> None:
         super().__init__(name)
-        gemini_client = OpenAIChatCompletionClient(model="gemini-2.0-flash", temperature=1.0)
-        self._delegate = AssistantAgent(
-                            name, 
-                            model_client=gemini_client, 
-                            system_message=self.system_message
-                        )
+        model_client = OpenAIChatCompletionClient(model="gpt-4o-mini", temperature=0.6)
+        self._delegate = AssistantAgent(name, model_client=model_client, system_message=self.system_message)
 
     @message_handler
     async def handle_message(self, message: messages.Message, ctx: MessageContext) -> messages.Message:
