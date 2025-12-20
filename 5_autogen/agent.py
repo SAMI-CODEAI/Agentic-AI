@@ -21,6 +21,7 @@ class Agent(RoutedAgent):
     Your weaknesses: you're not patient, and can be impulsive.
     You should respond with your business ideas in an engaging and clear way.
     """
+    
 
     CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.5
 
